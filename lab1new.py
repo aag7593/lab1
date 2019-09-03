@@ -10,13 +10,15 @@ import turtle
 
 
 def evaluate(directions: str):
+    if directions.index("P") != -1:
+        directions = expand_polygon(directions)
     if directions.index("I") != -1:
         directions = expand_iterate(directions)
     commands = directions.split(" ")
     for string in commands:
         letter = string[0:1]
         if letter != "U" and letter != "D":
-            num = int(string[1:4])
+            num = float(string[1:])
             if letter == "F":
                 turtle.forward(num)
             elif letter == "B":
@@ -42,6 +44,15 @@ def expand_iterate(instructions:str):
     for _ in range(0, times):
         new_instruct += repeat
     new_instruct = new_instruct[0:len(new_instruct)-1]
+    return new_instruct
+
+
+def expand_polygon(instructions:str):
+    p = instructions.index("P")
+    sides = int(instructions[p+1:p+2])
+    angle = 360/sides
+    length = int(instructions[p+3:p+6])
+    new_instruct = "I" + str(sides) + " F" + str(length) + " L" + str(angle) + " @"
     return new_instruct
 
 
