@@ -8,7 +8,10 @@ author: Alexis Gordon
 """
 import turtle
 
+
 def evaluate(directions: str):
+    if directions.index("I") != -1:
+        directions = expand_iterate(directions)
     commands = directions.split(" ")
     for string in commands:
         letter = string[0:1]
@@ -30,6 +33,18 @@ def evaluate(directions: str):
             turtle.down()
 
 
+def expand_iterate(instructions:str):
+    start = instructions.index("I")
+    end = instructions.index("@")
+    repeat = instructions[start+3:end]
+    times = int(instructions[start+1:start+2])
+    new_instruct = ""
+    for _ in range(0, times):
+        new_instruct += repeat
+    new_instruct = new_instruct[0:len(new_instruct)-1]
+    return new_instruct
+
+
 def main() -> None:
     evaluate(input("Enter your TT program directions"))
     turtle.mainloop()
@@ -39,6 +54,7 @@ def main() -> None:
     that program to the basic TT commands and then executes them.
     :return: None
     """
+
 
 if __name__ == '__main__':
     main()
