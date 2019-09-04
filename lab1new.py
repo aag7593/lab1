@@ -10,9 +10,9 @@ import turtle
 
 
 def evaluate(directions: str):
-    if directions.index("P") != -1:
+    if directions.find("P") != -1:
         directions = expand_polygon(directions)
-    if directions.index("I") != -1:
+    if directions.find("I") != -1:
         directions = expand_iterate(directions)
     commands = directions.split(" ")
     for string in commands:
@@ -35,24 +35,36 @@ def evaluate(directions: str):
             turtle.down()
 
 
-def expand_iterate(instructions:str):
+def expand_iterate(instructions: str):
     start = instructions.index("I")
-    end = instructions.index("@")
-    repeat = instructions[start+3:end]
+    finish = instructions.index("@")
+    repeat = instructions[start+3:finish]
     times = int(instructions[start+1:start+2])
     new_instruct = ""
+    beg = ""
+    end = ""
+    if instructions[0] != "I":
+        beg = instructions[0:start]
+    if instructions[len(instructions)-1:len(instructions)] != "@":
+        end = instructions[finish+1:]
     for _ in range(0, times):
         new_instruct += repeat
-    new_instruct = new_instruct[0:len(new_instruct)-1]
+    new_instruct = beg + new_instruct[0:len(new_instruct)-1] + end
     return new_instruct
 
 
-def expand_polygon(instructions:str):
+def expand_polygon(instructions: str):
     p = instructions.index("P")
-    sides = int(instructions[p+1:p+2])
-    angle = 360/sides
-    length = int(instructions[p+3:p+6])
-    new_instruct = "I" + str(sides) + " F" + str(length) + " L" + str(angle) + " @"
+    sides = int(instructions[p + 1:p + 2])
+    angle = 360 / sides
+    length = int(instructions[p + 3:p + 6])
+    beg = ""
+    end = ""
+    if p != 0:
+        beg = instructions[0:p]
+    elif len(instructions) != 6:
+        end = instructions[p+6:]
+    new_instruct = beg + "I" + str(sides) + " F" + str(length) + " L" + str(angle) + " @" + end
     return new_instruct
 
 
