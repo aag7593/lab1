@@ -36,21 +36,27 @@ def evaluate(directions: str):
 
 
 def expand_iterate(instructions: str):
-    start = instructions.index("I")
-    finish = instructions.index("@")
-    repeat = instructions[start+3:finish]
-    times = int(instructions[start+1:start+2])
-    new_instruct = ""
-    beg = ""
-    end = ""
-    if instructions[0] != "I":
-        beg = instructions[0:start]
-    if instructions[len(instructions)-1:len(instructions)] != "@":
-        end = instructions[finish+1:]
-    for _ in range(0, times):
-        new_instruct += repeat
-    new_instruct = beg + new_instruct[0:len(new_instruct)-1] + end
-    return new_instruct
+    num = instructions.count("I")
+    final = instructions
+    while num != 0:
+        start = latest_i(final)
+        """ see explanation below for function latest_i"""
+        finish = following_a(final, start)
+        """ see explanation below for function following_a"""
+        repeat = final[start+3:finish]
+        times = int(final[start+1:start+2])
+        new_instruct = ""
+        beg = ""
+        end = ""
+        if start != 0:
+            beg = final[0:start]
+        if finish != -1:
+            end = final[finish+1:]
+        for _ in range(0, times):
+            new_instruct += repeat
+        final = beg + new_instruct[0:len(new_instruct)-1] + end
+        num -= 1
+    return final
 
 
 def expand_polygon(instructions: str):
@@ -62,10 +68,44 @@ def expand_polygon(instructions: str):
     end = ""
     if p != 0:
         beg = instructions[0:p]
-    elif len(instructions) != 6:
+    elif len(instructions) > 6:
         end = instructions[p+6:]
     new_instruct = beg + "I" + str(sides) + " F" + str(length) + " L" + str(angle) + " @" + end
     return new_instruct
+
+
+"""
+Note about extra function written:
+latest_i finds the last occurrence of substring "I" in instructions
+"""
+
+
+def latest_i(instructions: int):
+    index = -1
+    for a in range(0, len(instructions)):
+        if instructions[a:a+1] == "I":
+            index = a
+    return index
+
+
+"""
+Note about extra function written:
+following_a finds the first occurrence of substring "@" after the latest "I" in instructions
+"""
+
+
+def following_a(instructions, num: int):
+    index = -1
+    count = 1
+    counter = 0
+    for a in range(num+1, len(instructions)):
+        if instructions[a:a+1] == "I":
+            count += 1
+        if instructions[a:a+1] == "@":
+            counter += 1
+            if count == counter:
+                index = a
+                return index
 
 
 def main() -> None:
